@@ -233,14 +233,20 @@ function addPurchase(){
   updateDashboard();
 }
 
+// When Approved -> Add to Inventory
 function approvePurchase(i){
   if(purchases[i].status !== "Pending") return;
   purchases[i].status = "Approved";
 
   let item = purchases[i].item;
-  inventory[item] = (inventory[item]||0) + purchases[i].qty;
   
-  logAction(`Approved: ${item}. Stock increased.`);
+  // Create inventory item if missing
+  if(!inventory[item]) inventory[item] = 0;
+  
+  // Add to stock
+  inventory[item] += purchases[i].qty;
+  
+  logAction(`Approved: ${item} from ${purchases[i].supplier}. Added +${purchases[i].qty} to Inventory.`);
   saveData();
   renderAll();
 }
@@ -362,13 +368,60 @@ function updateDashboard(){
     dLow.textContent = Object.values(inventory).filter(x=>x<=10).length;
 }
 
+// --- Report Generation ---
 function updateReports(){
+    // 1. Basic Counts
     rPurch.textContent = purchases.length;
     rDel.textContent = deliveries.length;
-    let app=0, pen=0, rej=0; 
-    purchases.forEach(p=>{ if(p.status=="Approved") app++; else if(p.status=="Pending") pen++; else rej++; });
-    rApproved.textContent=app; rPending.textContent=pen; rRejected.textContent=rej;
-    let tr=0, dl=0;
-    deliveries.forEach(d=>{ if(d.status=="In Transit") tr++; else if(d.status=="Delivered") dl++; });
-    rTransit.textContent=tr; rDelivered.textContent=dl;
+    
+    let app=0, pen=0; 
+    purchases.forEach(p=>{ if(p.status=="Approved") app++; else if(p.status=="Pending") pen++; });
+    rApproved.textContent=app; 
+    rPending.textContent=pen; 
+    
+    let dl=0;
+    deliveries.forEach(d=>{ if(d.status=="Delivered") dl++; });
+    rDelivered.textContent=dl;
+
+    // 2. Supplier Performance (Count Orders & Items)
+    const supplierStats = {};
+    purchases.forEach(p => {
+        if(!supplierStats[p.supplier]) {
+            supplierStats[p.supplier] = { count: 0, items: 0 };
+        }
+        supplierStats[p.supplier].count++;
+        supplierStats[p.supplier].items += p.qty;
+    });
+
+    const supTable = document.getElementById("supplierReportTable");
+    if(supTable) {
+        supTable.innerHTML = Object.keys(supplierStats).map(s => `
+            <tr>
+                <td>${s}</td>
+                <td>${supplierStats[s].count} orders</td>
+                <td>${supplierStats[s].items} items</td>
+            </tr>
+        `).join("");
+    }
+
+    // 3. Driver Performance (Count Delivered)
+    const driverStats = {};
+    deliveries.forEach(d => {
+        if(!d.driver) return; 
+        if(!driverStats[d.driver]) driverStats[d.driver] = 0;
+        
+        if(d.status === "Delivered") {
+            driverStats[d.driver]++;
+        }
+    });
+
+    const driverTable = document.getElementById("driverReportTable");
+    if(driverTable) {
+        driverTable.innerHTML = Object.keys(driverStats).map(d => `
+            <tr>
+                <td>${d}</td>
+                <td>${driverStats[d]} completed</td>
+            </tr>
+        `).join("");
+    }
 }
