@@ -150,7 +150,7 @@
     </section>
 
     <section id="delivery" class="page">
-      <h2 class="page-title">Delivery</h2>
+      <h2 class="page-title">Delivery Tracking</h2>
       <div class="card">
         <div class="form-header">Schedule Delivery</div>
         <div class="form-section">
@@ -166,7 +166,7 @@
       </div>
       <div class="card">
         <table class="data-table">
-          <thead><tr><th>Customer</th><th>Item</th><th>Driver</th><th>Status</th><th class="action-cell">Actions</th></tr></thead>
+          <thead><tr><th>Customer</th><th>Item</th><th>Driver</th><th>Status</th><th class="action-cell">Update</th></tr></thead>
           <tbody id="deliveryTable"></tbody>
         </table>
       </div>
@@ -184,20 +184,35 @@
 
     <section id="reports" class="page">
       <h2 class="page-title">Reports</h2>
+      
       <div class="stats-grid">
         <div class="card">
-          <div class="form-header">Purchasing</div>
-          <div class="report-row"><span>Total</span><b id="rPurch">0</b></div>
+          <div class="form-header">Purchasing Summary</div>
+          <div class="report-row"><span>Total Orders</span><b id="rPurch">0</b></div>
           <div class="report-row"><span>Approved</span><b id="rApproved">0</b></div>
           <div class="report-row"><span>Pending</span><b id="rPending">0</b></div>
-          <div class="report-row"><span>Rejected</span><b id="rRejected">0</b></div>
         </div>
         <div class="card">
-          <div class="form-header">Delivery</div>
-          <div class="report-row"><span>Total</span><b id="rDel">0</b></div>
-          <div class="report-row"><span>In Transit</span><b id="rTransit">0</b></div>
-          <div class="report-row"><span>Delivered</span><b id="rDelivered">0</b></div>
+          <div class="form-header">Delivery Summary</div>
+          <div class="report-row"><span>Total Orders</span><b id="rDel">0</b></div>
+          <div class="report-row"><span>Completed</span><b id="rDelivered">0</b></div>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="form-header">Supplier Performance Report</div>
+        <table class="data-table">
+          <thead><tr><th>Supplier Name</th><th>Total Orders</th><th>Total Items Supplied</th></tr></thead>
+          <tbody id="supplierReportTable"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="form-header">Delivery Driver Report</div>
+        <table class="data-table">
+          <thead><tr><th>Driver Name</th><th>Deliveries Completed</th></tr></thead>
+          <tbody id="driverReportTable"></tbody>
+        </table>
       </div>
     </section>
 
